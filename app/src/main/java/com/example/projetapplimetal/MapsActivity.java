@@ -27,6 +27,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback {
@@ -38,6 +41,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     String locationProvider = LocationManager.GPS_PROVIDER;
     Location location = null;
 
+    ArrayList<ConcertWindowData>  listeConcerts;
+
+    ArrayList<Marker> listeMarker;
+
     LocationListener locationListener;
 
     @Override
@@ -48,6 +55,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        listeConcerts = new ArrayList<ConcertWindowData>();
+        listeMarker = new ArrayList<Marker>();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -79,24 +89,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
     }
 
+    public void addConcertToList(double lat , double lng , String titre , String image , String date , String duree){
 
-    private void setConcert(double lat , double lng , String titre , String image , String date , String duree){
-
-
-        LatLng position = new LatLng(lat, lng);
-
-
-        /**
-         *
-         * Mise en place des differents descriptifs
-         *
-         */
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(position).title(titre);
 
         ConcertWindowData concert = new ConcertWindowData();
 
+
+        concert.setPosition(new LatLng(lat,lng));
         concert.setNom(titre);
         concert.setImage("kal");
         concert.setDate(date);
@@ -104,28 +103,34 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         concert.setLien("hello");
 
 
-        /**
-         *
-         * Configuration de l'adapteur
-         *
-         */
+        listeConcerts.add(concert);
+
+
+    }
+
+
+
+
+    private void setConcerts(){
+
+        mMap.clear();
+        listeMarker.clear();
+
         ConcertInfoWindowGoogleMap concertInfoWindow = new ConcertInfoWindowGoogleMap(this);
         mMap.setInfoWindowAdapter(concertInfoWindow);
 
-        /**
-         *
-         * Rajout du Marker avec les différents attributs du concert
-         *
-         */
 
 
-        Marker concertMarker = mMap.addMarker(markerOptions);
+        for (int i = 0 ; i<listeConcerts.size() ; i++){
 
-        concertMarker.setTag(concert);
-        concertMarker.showInfoWindow();
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(listeConcerts.get(i).getPosition()).title(listeConcerts.get(i).getNom());
+            Marker concertMarker = mMap.addMarker(markerOptions);
+            listeMarker.add(concertMarker);
+            listeMarker.get(i).setTag(listeConcerts.get(i));
+            listeMarker.get(i).showInfoWindow();
 
-
-
+        }
     }
 
     public void rajoutConcert(View v){
@@ -153,10 +158,14 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
 
-                setConcert(extras.getDouble("lati") , extras.getDouble("longi") , (String)extras.get("titre") ,
+                addConcertToList(extras.getDouble("lati") , extras.getDouble("longi") , extras.getString("titre") ,
                         "kala" , extras.getString("date") , extras.getString("duree"));
 
 
+                setConcerts();
+
+                Log.println(Log.ASSERT , "LISTES Concerts" , listeConcerts.toString());
+                Log.println(Log.ASSERT , "LISTES MARKER" , listeMarker.toString());
 
             }
 

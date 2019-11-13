@@ -50,15 +50,16 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
             }
         });
 
-        nom.setText(marker.getTitle());
 
-        //Descripto nde la fenêtre
+
+        //Description de la fenêtre
 
 
         ConcertWindowData concertWindowData = (ConcertWindowData) marker.getTag();
         int imageId = context.getResources().getIdentifier(concertWindowData.getImage().toLowerCase(),
                 "drawable", context.getPackageName());
 
+        nom.setText(concertWindowData.getNom());
         image.setImageResource(imageId);
         date.setText(concertWindowData.getDate());
         duree.setText(concertWindowData.getDuree()+" heure(s)");

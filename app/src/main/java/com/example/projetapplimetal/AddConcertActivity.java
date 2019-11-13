@@ -3,10 +3,17 @@ package com.example.projetapplimetal;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+
+import java.io.File;
 
 public class AddConcertActivity extends AppCompatActivity {
 
@@ -15,6 +22,11 @@ public class AddConcertActivity extends AppCompatActivity {
     EditText duree;
     EditText lng;
     EditText lat;
+    ImageView imageView;
+
+    static final int DEMANDER_IMAGE= 1;
+
+
 
     public final int VALIDATE_ADD = 43;
     public final int VALIDATE_CANCELED = 44;
@@ -54,6 +66,31 @@ public class AddConcertActivity extends AppCompatActivity {
 
     }
 
+    public void prendrePhoto(View v){
+
+        Intent prendrePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (prendrePhoto.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(prendrePhoto, DEMANDER_IMAGE);
+        }
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+
+            if (requestCode == DEMANDER_IMAGE && resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                imageView.setImageBitmap(imageBitmap);
+            }
+
+
+
+    }
 
     @Override
     public void finish(){
