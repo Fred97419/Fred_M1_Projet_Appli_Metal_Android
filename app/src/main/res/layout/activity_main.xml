@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/zone_bouton"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/rajout"
+            android:layout_width="128dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Rajouter un concert "
+            android:onClick="rajoutConcert"/>
+    </LinearLayout>
+
+    <include layout="@layout/activity_maps" />
+
+</LinearLayout>
