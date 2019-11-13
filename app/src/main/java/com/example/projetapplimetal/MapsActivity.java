@@ -6,12 +6,16 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,8 +33,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     private GoogleMap mMap;
     public final int LOCATION = 1;
+    public final int AJOUT_CONCERT=2;
     LocationManager locationManager;
     String locationProvider = LocationManager.GPS_PROVIDER;
+    Location location = null;
 
     LocationListener locationListener;
 
@@ -53,6 +59,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 public void onLocationChanged(Location location) {
 
 
+
+
                 }
 
                 @Override
@@ -71,9 +79,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
     }
 
-    public void rajoutConcert(View v){
 
-        LatLng nuitdeKal = new LatLng(-20.940460, 55.294248);
+    private void setConcert(double lat , double lng , String titre , String image , String date , String duree){
+
+
+        LatLng position = new LatLng(lat, lng);
 
 
         /**
@@ -83,14 +93,14 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
          */
 
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(nuitdeKal)
-                .title("La nuit de kal 2019");
+        markerOptions.position(position).title(titre);
 
         ConcertWindowData concert = new ConcertWindowData();
 
+        concert.setNom(titre);
         concert.setImage("kal");
-        concert.setDate("02/11/2019");
-        concert.setDuree("5");
+        concert.setDate(date);
+        concert.setDuree(duree);
         concert.setLien("hello");
 
 
@@ -116,6 +126,43 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
 
+    }
+
+    public void rajoutConcert(View v){
+
+
+        try {
+            location = locationManager.getLastKnownLocation(locationProvider);
+        }catch (SecurityException e){}
+        Intent rajouter_concert = new Intent(this ,AddConcertActivity.class);
+        rajouter_concert.putExtra("lat" , location.getLatitude());
+        rajouter_concert.putExtra("long" , location.getLongitude());
+        startActivityForResult(rajouter_concert , AJOUT_CONCERT );
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode==AJOUT_CONCERT && resultCode==RESULT_OK){
+
+            Bundle extras = data.getExtras();
+
+            if(extras !=null){
+
+
+
+
+                setConcert(extras.getDouble("lati") , extras.getDouble("longi") , (String)extras.get("titre") ,
+                        "kala" , extras.getString("date") , extras.getString("duree"));
+
+
+
+            }
+
+
+
+        }
 
 
 
@@ -144,6 +191,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+
     }
 
     @Override
