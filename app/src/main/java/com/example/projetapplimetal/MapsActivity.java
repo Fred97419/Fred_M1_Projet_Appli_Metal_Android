@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback  {
 
     private GoogleMap mMap;
     public final int LOCATION = 1;
@@ -42,6 +42,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     LocationManager locationManager;
     String locationProvider = LocationManager.GPS_PROVIDER;
     Location location = null;
+
+    ShakeListener shaker;
 
     ArrayList<ConcertWindowData>  listeConcerts;
 
@@ -62,6 +64,19 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         listeMarker = new ArrayList<Marker>();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+        shaker = new ShakeListener(this);
+
+        shaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
+            @Override
+            public void onShake() {
+
+                Log.println(Log.ASSERT , "SHAKE IT " , "SHAKE IT" );
+
+            }
+        });
+
 
 
         if (locationManager != null) {
@@ -232,5 +247,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         // (the camera animates to the user's current position).
         return false;
     }
+
+
+    /**
+     * Methode pour la gestion de la secousse
+     *
+     *
+     */
 
 }
