@@ -66,13 +66,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
+        /**
+         *
+         * Classe qui detecte si il y a une secousse
+         */
         shaker = new ShakeListener(this);
-
         shaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
             @Override
             public void onShake() {
 
-                Log.println(Log.ASSERT , "SHAKE IT " , "SHAKE IT" );
+                envoieLocalisationToActivity();
 
             }
         });
@@ -152,7 +155,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
     public void rajoutConcert(View v){
+        envoieLocalisationToActivity();
+    }
 
+    private void envoieLocalisationToActivity(){
 
         try {
             location = locationManager.getLastKnownLocation(locationProvider);
@@ -163,6 +169,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         startActivityForResult(rajouter_concert , AJOUT_CONCERT );
 
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

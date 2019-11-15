@@ -73,17 +73,18 @@ public class ShakeListener implements SensorEventListener
 
 
 
-        if (event.sensor.getType() != SensorManager.SENSOR_ACCELEROMETER) return;
+
         long now = System.currentTimeMillis();
 
         if ((now - mLastForce) > SHAKE_TIMEOUT) {
+
             mShakeCount = 0;
         }
 
         if ((now - mLastTime) > TIME_THRESHOLD) {
-            Log.println(Log.ASSERT , "SHAKE IT " , "SHAKE IT" );
 
-            Log.println(Log.ASSERT , "X" , Float.toString(event.values[0]));
+
+
 
             long diff = now - mLastTime;
             float speed = Math.abs(event.values[0] + event.values[1] + event.values[2] - mLastX - mLastY - mLastZ) / diff * 10000;
@@ -97,6 +98,7 @@ public class ShakeListener implements SensorEventListener
                 }
                 mLastForce = now;
             }
+
             mLastTime = now;
             mLastX = event.values[0];
             mLastY = event.values[1];
