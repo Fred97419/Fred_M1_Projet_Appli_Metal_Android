@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -89,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
     }
 
-    public void addConcertToList(double lat , double lng , String titre , String image , String date , String duree){
+    public void addConcertToList(double lat , double lng , String titre , Bitmap image , String date , String heure, String duree){
 
 
         ConcertWindowData concert = new ConcertWindowData();
@@ -97,10 +99,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         concert.setPosition(new LatLng(lat,lng));
         concert.setNom(titre);
-        concert.setImage("kal");
+
+        if (image!=null) concert.setImage(image);
         concert.setDate(date);
         concert.setDuree(duree);
-        concert.setLien("hello");
+        concert.setHeure(heure);
 
 
         listeConcerts.add(concert);
@@ -155,16 +158,35 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             if(extras !=null){
 
+                Bitmap image;
+
+
+                /*
+
+                Si on a pas d'image récupérée on donne une image par default
+
+                 */
+                if(extras.get("image") == null ){
+
+                    image = BitmapFactory.decodeResource(getResources() , R.drawable.kal);
+
+                }
+
+                else {
+
+                    image = (Bitmap) extras.get("image");
+
+                }
 
 
 
                 addConcertToList(extras.getDouble("lati") , extras.getDouble("longi") , extras.getString("titre") ,
-                        "kala" , extras.getString("date") , extras.getString("duree"));
+                        image , extras.getString("date") ,extras.getString("heure"), extras.getString("duree"));
 
 
                 setConcerts();
 
-                Log.println(Log.ASSERT , "LISTES Concerts" , listeConcerts.toString());
+                Log.println(Log.ASSERT , "LISTES Concerts" , listeConcerts.get(0).getDate());
                 Log.println(Log.ASSERT , "LISTES MARKER" , listeMarker.toString());
 
             }

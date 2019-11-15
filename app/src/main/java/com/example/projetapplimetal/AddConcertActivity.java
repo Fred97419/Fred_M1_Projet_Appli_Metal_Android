@@ -20,16 +20,19 @@ public class AddConcertActivity extends AppCompatActivity {
     EditText nom;
     EditText date;
     EditText duree;
+    EditText heure;
     EditText lng;
     EditText lat;
-    ImageView imageView;
+
+
+    Bitmap image_to_send;
+
 
     static final int DEMANDER_IMAGE= 1;
 
 
 
-    public final int VALIDATE_ADD = 43;
-    public final int VALIDATE_CANCELED = 44;
+
 
     boolean validate = false;
 
@@ -40,6 +43,7 @@ public class AddConcertActivity extends AppCompatActivity {
 
         nom = findViewById(R.id.nom_concert);
         date = findViewById(R.id.edit_DATE);
+        heure = findViewById(R.id.edit_heure);
         duree = findViewById(R.id.edit_duree);
         lng = findViewById(R.id.lng_edit);
         lat = findViewById(R.id.lat_edit);
@@ -80,13 +84,17 @@ public class AddConcertActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+            Log.println(Log.ASSERT , "BLA" , "TESSSSST");
 
 
             if (requestCode == DEMANDER_IMAGE && resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                imageView.setImageBitmap(imageBitmap);
+                image_to_send = (Bitmap) extras.get("data");
+
             }
+
+
+
 
 
 
@@ -95,7 +103,7 @@ public class AddConcertActivity extends AppCompatActivity {
     @Override
     public void finish(){
 
-        Intent intent = new Intent();
+        Intent intent = new Intent(this, MapsActivity.class);
 
         if(!validate){
 
@@ -106,12 +114,16 @@ public class AddConcertActivity extends AppCompatActivity {
 
         if(validate){
 
-            intent.putExtra("titre " , nom.getText().toString());
+            intent.putExtra("titre" , nom.getText().toString());
             Log.println(Log.ASSERT , "valeur_titre" , nom.getText().toString());
             intent.putExtra("date" , date.getText().toString());
+            intent.putExtra("heure" , heure.getText().toString());
             intent.putExtra("duree" , duree.getText().toString());
             intent.putExtra("longi" , Double.valueOf(lng.getText().toString()));
             intent.putExtra("lati" , Double.valueOf(lat.getText().toString()));
+
+            if (image_to_send!=null) intent.putExtra("image" , image_to_send);
+
             setResult(RESULT_OK , intent);
             super.finish();
 

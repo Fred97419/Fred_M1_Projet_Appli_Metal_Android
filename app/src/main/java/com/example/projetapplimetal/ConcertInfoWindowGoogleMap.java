@@ -36,19 +36,13 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         View view = ((Activity)context).getLayoutInflater()
                 .inflate(R.layout.concert_layout, null);
 
-        TextView nom = view.findViewById(R.id.nom);
+        TextView nom = view.findViewById(R.id.titre);
         ImageView image = view.findViewById(R.id.image);
         TextView date = view.findViewById(R.id.date);
         TextView duree = view.findViewById(R.id.duree);
-        Button lien = view.findViewById(R.id.lien);
+        TextView heure = view.findViewById(R.id.heure);
 
-        lien.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Toast.makeText(context , "LIEEEEEN" , Toast.LENGTH_LONG);
-            }
-        });
 
 
 
@@ -56,13 +50,12 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
 
 
         ConcertWindowData concertWindowData = (ConcertWindowData) marker.getTag();
-        int imageId = context.getResources().getIdentifier(concertWindowData.getImage().toLowerCase(),
-                "drawable", context.getPackageName());
 
         nom.setText(concertWindowData.getNom());
-        image.setImageResource(imageId);
+        image.setImageBitmap(concertWindowData.getImage());
         date.setText(concertWindowData.getDate());
         duree.setText(concertWindowData.getDuree()+" heure(s)");
+        heure.setText(concertWindowData.getHeure());
 
 
         return view;
