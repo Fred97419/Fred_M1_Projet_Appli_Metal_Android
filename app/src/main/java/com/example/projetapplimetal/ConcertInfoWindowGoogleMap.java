@@ -3,10 +3,8 @@ package com.example.projetapplimetal;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
@@ -36,7 +34,7 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         View view = ((Activity)context).getLayoutInflater()
                 .inflate(R.layout.concert_layout, null);
 
-        TextView nom = view.findViewById(R.id.titre);
+        TextView nom = view.findViewById(R.id.titreRow);
         ImageView image = view.findViewById(R.id.image);
         TextView date = view.findViewById(R.id.date);
         TextView duree = view.findViewById(R.id.duree);
@@ -52,7 +50,7 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         ConcertWindowData concertWindowData = (ConcertWindowData) marker.getTag();
 
         nom.setText(concertWindowData.getNom());
-        image.setImageBitmap(concertWindowData.getImage());
+        image.setImageBitmap(concertWindowData.getImage().getBitmap());
         date.setText(concertWindowData.getDate());
         duree.setText(concertWindowData.getDuree()+" heure(s)");
         heure.setText(concertWindowData.getHeure());

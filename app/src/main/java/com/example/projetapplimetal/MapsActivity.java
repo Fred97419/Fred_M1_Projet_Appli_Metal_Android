@@ -109,13 +109,14 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
     }
 
-    public void addConcertToList(double lat , double lng , String titre , Bitmap image , String date , String heure, String duree){
+    public void addConcertToList(double lat , double lng , String titre , SerializableBitmap image , String date , String heure, String duree){
 
 
         ConcertWindowData concert = new ConcertWindowData();
 
 
-        concert.setPosition(new LatLng(lat,lng));
+        concert.setLat(lat);
+        concert.setLng(lng);
         concert.setNom(titre);
 
         if (image!=null) concert.setImage(image);
@@ -145,13 +146,30 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         for (int i = 0 ; i<listeConcerts.size() ; i++){
 
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(listeConcerts.get(i).getPosition()).title(listeConcerts.get(i).getNom());
+            markerOptions.position(new LatLng(listeConcerts.get(i).getLat() , listeConcerts.get(i).getLng())).title(listeConcerts.get(i).getNom());
             Marker concertMarker = mMap.addMarker(markerOptions);
             listeMarker.add(concertMarker);
             listeMarker.get(i).setTag(listeConcerts.get(i));
             listeMarker.get(i).showInfoWindow();
 
         }
+    }
+
+    public void voirListeConcerts(View v){
+
+        Bundle extras = new Bundle();
+
+        extras.putSerializable("listeConcert" , listeConcerts);
+
+        Intent forListeConcertsActivity = new Intent(this ,ListeConcertActivity.class);
+
+        forListeConcertsActivity.putExtras(extras);
+
+
+       startActivity(forListeConcertsActivity);
+
+
+
     }
 
     public void rajoutConcert(View v){
@@ -182,6 +200,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             if(extras !=null){
 
                 Bitmap image;
+                SerializableBitmap serializableImage;
 
 
                 /*
@@ -192,19 +211,30 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 if(extras.get("image") == null ){
 
                     image = BitmapFactory.decodeResource(getResources() , R.drawable.kal);
+                    serializableImage = new SerializableBitmap(image);
+
 
                 }
 
                 else {
 
-                    image = (Bitmap) extras.get("image");
+                    serializableImage = (SerializableBitmap) extras.get("image");
+
 
                 }
 
 
+                /**
+                 *
+                 *  Utilisation de la classe SerializableBitmap, car ls images BitMap n'étant pas "Serializable"
+                 *  ne peuvent donc pas être passées par des Intent
+                 *
+                 */
+
+
 
                 addConcertToList(extras.getDouble("lati") , extras.getDouble("longi") , extras.getString("titre") ,
-                        image , extras.getString("date") ,extras.getString("heure"), extras.getString("duree"));
+                        serializableImage , extras.getString("date") ,extras.getString("heure"), extras.getString("duree"));
 
 
                 setConcerts();

@@ -4,25 +4,45 @@ import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class ConcertWindowData {
+import java.io.Serializable;
+
+public class ConcertWindowData implements Serializable {
 
     private String nom;
-    private Bitmap image;
+
+
+    /**
+     * Classe qui permet d'envoyer un BitMap car la classe BitMap ne l'ai pas
+     *
+     * de même pour l'objet LatLng
+     *
+     */
+    private SerializableBitmap image;
     private String date;
     private String duree;
     private String heure;
-    private LatLng position;
+    ;
 
-    public LatLng getPosition(){return this.position;}
+    private double lat;
+    private double lng;
+
+
+
+    public double getLat(){return this.lat;}
+    public double getLng(){return this.lng;}
+
     public String getNom(){return this.nom;}
-    public Bitmap getImage(){return this.image;}
+    public SerializableBitmap getImage(){return this.image;}
     public String getDate(){return this.date;}
     public String getDuree(){return this.duree;}
     public String getHeure(){return this.heure;}
 
-    public void setPosition(LatLng p){position=p;}
+
+    public void setLat(double lat) { this.lat = lat;}
+    public void setLng(double lng) {this.lng = lng;}
+
     public void setNom(String nom){this.nom = nom;}
-    public void setImage(Bitmap image){this.image = image;}
+    public void setImage(SerializableBitmap image){this.image = image;}
     public void setDate(String date){this.date = date;}
     public void setDuree(String duree){this.duree = duree;}
     public void setHeure(String lien){this.heure = lien;}

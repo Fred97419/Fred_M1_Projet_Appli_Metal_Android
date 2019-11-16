@@ -122,7 +122,7 @@ public class AddConcertActivity extends AppCompatActivity {
             intent.putExtra("longi" , Double.valueOf(lng.getText().toString()));
             intent.putExtra("lati" , Double.valueOf(lat.getText().toString()));
 
-            if (image_to_send!=null) intent.putExtra("image" , image_to_send);
+            if (image_to_send!=null) intent.putExtra("image" , new SerializableBitmap(image_to_send));
 
             setResult(RESULT_OK , intent);
             super.finish();
