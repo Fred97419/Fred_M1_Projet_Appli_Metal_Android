@@ -200,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             if(extras !=null){
 
                 Bitmap image;
-                SerializableBitmap serializableImage;
+                SerializableBitmap serializableImage = null;
 
 
                 /*
@@ -266,6 +266,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             mMap.setMyLocationEnabled(true);
             mMap.setOnMyLocationButtonClickListener(this);
             mMap.setOnMyLocationClickListener(this);
+            setConcerts();
 
         }
 

@@ -1,6 +1,7 @@
 package com.example.projetapplimetal;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
 public class ConcertAdapter extends ArrayAdapter<ConcertWindowData>  {
 
@@ -87,7 +90,9 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData>  {
             @Override
             public void onClick(View v) {
 
-                Log.println(Log.ASSERT , "BOUTON_GO" , Double.toString(concert.getLat()) +"  "+Double.toString(concert.getLng()) );
+                Intent intent = new Intent(context , MapsActivity.class);
+                intent.setFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+                context.startActivity(intent);
 
             }
         });
