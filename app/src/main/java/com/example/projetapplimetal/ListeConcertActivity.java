@@ -43,6 +43,28 @@ public class ListeConcertActivity extends AppCompatActivity {
 
 
         Log.println(Log.ASSERT , "listeView value " , adapter.getListeConcerts().toString());
+        finish();
+
+
+    }
+
+    @Override
+    public void finish(){
+
+        Bundle extras = new Bundle();
+
+        extras.putSerializable("liste_listeView" , adapter.getListeConcerts());
+
+        Intent forMapActivity = new Intent(this, MapsActivity.class);
+
+        forMapActivity.putExtras(extras);
+
+        setResult(RESULT_OK , forMapActivity);
+
+        super.finish();
+
+
+
 
 
     }

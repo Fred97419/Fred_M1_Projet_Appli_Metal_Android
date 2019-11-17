@@ -267,6 +267,20 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
 
 
+        if(requestCode==LISTE_CONCERT && resultCode==RESULT_OK){
+
+            Bundle extras = data.getExtras();
+
+            Log.println(Log.ASSERT , "listeView value " , extras.getSerializable("liste_listeView").toString());
+
+            listeConcerts = (ArrayList<ConcertWindowData>) extras.getSerializable("liste_listeView");
+            setConcerts();
+
+
+
+        }
+
+
 
 
     }
