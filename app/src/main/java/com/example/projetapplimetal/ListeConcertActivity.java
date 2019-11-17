@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ListeConcertActivity extends AppCompatActivity {
 
             ArrayList<ConcertWindowData> liste = (ArrayList<ConcertWindowData>) bundle.getSerializable("listeConcert");
 
-            adapter = new ConcertAdapter( liste, getApplicationContext());
+            adapter = new ConcertAdapter(this , liste, getApplicationContext());
 
             liste_concertsView.setAdapter(adapter);
 
@@ -54,6 +55,9 @@ public class ListeConcertActivity extends AppCompatActivity {
         Bundle extras = new Bundle();
 
         extras.putSerializable("liste_listeView" , adapter.getListeConcerts());
+        extras.putDouble("go_long" , adapter.getSend_long());
+        extras.putDouble("go_lat" , adapter.getSend_lat());
+
 
         Intent forMapActivity = new Intent(this, MapsActivity.class);
 
@@ -68,4 +72,6 @@ public class ListeConcertActivity extends AppCompatActivity {
 
 
     }
+
+
 }

@@ -40,6 +40,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     public final int LOCATION = 1;
     public final int AJOUT_CONCERT=2;
     public final int LISTE_CONCERT=3;
+
+
+    double go_long;
+    double go_lat;
+
     LocationManager locationManager;
     String locationProvider = LocationManager.GPS_PROVIDER;
     Location location = null;
@@ -211,6 +216,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+
+
+
         if(requestCode==AJOUT_CONCERT && resultCode==RESULT_OK){
 
             Bundle extras = data.getExtras();
@@ -271,17 +279,29 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             Bundle extras = data.getExtras();
 
-            Log.println(Log.ASSERT , "listeView value " , extras.getSerializable("liste_listeView").toString());
+            Log.println(Log.ASSERT , "listeView value " , Double.toString(extras.getDouble("go_long")));
+            Log.println(Log.ASSERT , "listeView value " , Double.toString(extras.getDouble("go_lat")));
+
 
             listeConcerts = (ArrayList<ConcertWindowData>) extras.getSerializable("liste_listeView");
+            double lng = extras.getDouble("go_long");
+            double lat = extras.getDouble("go_lat");
+
             setConcerts();
 
-
+            if(lng != -1 && lat !=-1) goToMarker(lat , lng);
 
         }
 
 
 
+
+    }
+
+    public void goToMarker(double lat , double lng){
+
+        LatLng pos = new LatLng(lat , lng);
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
 
     }
 
@@ -299,6 +319,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             mMap.setOnMyLocationButtonClickListener(this);
             mMap.setOnMyLocationClickListener(this);
             setConcerts();
+
+
+
+
 
         }
 

@@ -1,4 +1,33 @@
 <resources>
     <string name="app_name">ProjetAppliMetal</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- Attributs -->
+    <string name="nom">Nom</string>
+    <string name="date">Date</string>
+    <string name="heure">Heure</string>
+    <string name="duree">Durée</string>
+    <string name="lng">Longitude</string>
+    <string name="lat">Latitude</string>
+
+
+    <!-- ADD_CONCERT -->
+    <string name="add_concert_titre">Rajouter un concert sur ma position</string>
+    <string name="add_concert_photo">Ajouter une photo</string>
+    <string name="valider">Valider</string>
+    <string name="annuler">Annuler</string>
+
+    <string name="name_hint">Entrez un nom</string>
+    <string name="date_hint">Entrez une date</string>
+    <string name="heure_hint">Entrez une heure</string>
+    <string name="duree_hint">Entrez une durée</string>
+
+    <!-- LISTE_CONCERT -->
+    <string name="liste_concert_titre">Liste des concerts</string>
+
+
+    <!-- MAIN -->
+    <string name="main_ajouter_concert">Rajouter un concert</string>
+
+
 </resources>

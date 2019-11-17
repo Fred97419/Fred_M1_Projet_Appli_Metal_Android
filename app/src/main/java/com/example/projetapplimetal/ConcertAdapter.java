@@ -1,5 +1,6 @@
 package com.example.projetapplimetal;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,17 +14,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
+
 
 public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     private ArrayList<ConcertWindowData> listeConcerts;
+    private double send_lat;
+    private double send_long;
+
 
     Context context;
+    AppCompatActivity liste_activity;
 
     private static class ViewHolder {
 
@@ -37,11 +43,16 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     }
 
-    public ConcertAdapter(ArrayList<ConcertWindowData> data, Context context) {
+    public ConcertAdapter(AppCompatActivity liste_activity,ArrayList<ConcertWindowData> data, Context context) {
 
         super(context, R.layout.row_concert, data);
         this.listeConcerts = data;
         this.context = context;
+        this.liste_activity = liste_activity;
+
+        this.send_long = -1;
+        this.send_lat = -1;
+
 
 
     }
@@ -93,8 +104,12 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(context, MapsActivity.class);
-                context.startActivity(intent);
+                send_long=concert.getLng();
+                send_lat=concert.getLat();
+                liste_activity.finish();
+
+
+
 
             }
         });
@@ -124,6 +139,14 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     public ArrayList<ConcertWindowData> getListeConcerts() {
         return this.listeConcerts;
+    }
+
+    public double getSend_long() {
+        return send_long;
+    }
+
+    public double getSend_lat() {
+        return send_lat;
     }
 }
 
