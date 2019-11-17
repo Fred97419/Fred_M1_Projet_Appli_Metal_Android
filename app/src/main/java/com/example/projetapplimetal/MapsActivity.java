@@ -39,6 +39,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private GoogleMap mMap;
     public final int LOCATION = 1;
     public final int AJOUT_CONCERT=2;
+    public final int LISTE_CONCERT=3;
     LocationManager locationManager;
     String locationProvider = LocationManager.GPS_PROVIDER;
     Location location = null;
@@ -80,6 +81,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             }
         });
 
+        /**
+         *
+         * Sauvegarde de la liste des concerts dans le bundle pour éviter la perte de données
+         *
+         */
+
+        if(savedInstanceState != null){
+
+            listeConcerts = (ArrayList<ConcertWindowData>) savedInstanceState.get("liste_concert_save");
+        }
+
 
 
         if (locationManager != null) {
@@ -87,9 +99,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-
-
-
 
                 }
 
@@ -107,6 +116,15 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             };
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putSerializable("liste_concert_save" , listeConcerts);
+
+
     }
 
     public void addConcertToList(double lat , double lng , String titre , SerializableBitmap image , String date , String heure, String duree){
@@ -166,7 +184,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         forListeConcertsActivity.putExtras(extras);
 
 
-       startActivity(forListeConcertsActivity);
+       startActivityForResult(forListeConcertsActivity , LISTE_CONCERT);
 
 
 

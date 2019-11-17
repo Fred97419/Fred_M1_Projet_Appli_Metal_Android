@@ -1,7 +1,9 @@
 package com.example.projetapplimetal;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +13,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.util.ArrayList;
 
 import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
-public class ConcertAdapter extends ArrayAdapter<ConcertWindowData>  {
+public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     private ArrayList<ConcertWindowData> listeConcerts;
 
@@ -33,12 +37,11 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData>  {
 
     }
 
-    public ConcertAdapter(ArrayList<ConcertWindowData> data, Context context){
+    public ConcertAdapter(ArrayList<ConcertWindowData> data, Context context) {
 
-        super(context , R.layout.row_concert , data);
+        super(context, R.layout.row_concert, data);
         this.listeConcerts = data;
         this.context = context;
-
 
 
     }
@@ -69,12 +72,12 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData>  {
             viewHolder.voirConcert = convertView.findViewById(R.id.go);
             viewHolder.deleteConcert = convertView.findViewById(R.id.supprimer);
 
-            result=convertView;
+            result = convertView;
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
-            result=convertView;
+            result = convertView;
         }
 
 
@@ -90,19 +93,39 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData>  {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(context , MapsActivity.class);
-                intent.setFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+                Intent intent = new Intent(context, MapsActivity.class);
                 context.startActivity(intent);
 
             }
         });
-        // Return the completed view to render on screen
+
+        viewHolder.deleteConcert.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                listeConcerts.remove(lastPosition);
+                notifyDataSetChanged();
+
+
+                Bundle listeBundle = new Bundle();
+                listeBundle.putSerializable("liste_avec_supression" , listeConcerts);
+                Intent listeChanged = new Intent(context , MapsActivity.class);
+                listeChanged.putExtras(listeBundle);
+
+
+            }
+
+
+        });
+
         return convertView;
     }
 
-
-
+    public ArrayList<ConcertWindowData> getListeConcerts() {
+        return this.listeConcerts;
     }
+}
 
 
 
