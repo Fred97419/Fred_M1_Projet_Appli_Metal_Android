@@ -7,8 +7,10 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,9 +43,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     public final int AJOUT_CONCERT=2;
     public final int LISTE_CONCERT=3;
 
+    public final String PROX_ALERT_INTENT = "com.example.projetapplimetal.ProximityAlert";
 
-    double go_long;
-    double go_lat;
 
     LocationManager locationManager;
     String locationProvider = LocationManager.GPS_PROVIDER;
@@ -65,6 +66,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         listeConcerts = new ArrayList<ConcertWindowData>();
         listeMarker = new ArrayList<Marker>();
@@ -158,8 +160,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     private void setConcerts(){
 
+
         mMap.clear();
         listeMarker.clear();
+        supprimerProximityAlert();
+
 
         ConcertInfoWindowGoogleMap concertInfoWindow = new ConcertInfoWindowGoogleMap(this);
         mMap.setInfoWindowAdapter(concertInfoWindow);
@@ -175,7 +180,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             listeMarker.get(i).setTag(listeConcerts.get(i));
             listeMarker.get(i).showInfoWindow();
 
+
         }
+
+        ajouterProximityAlert();
+        initialiseReceiver();
+
+
     }
 
     public void voirListeConcerts(View v){
@@ -211,6 +222,21 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     }
 
+
+    public void onPause() {
+        super.onPause();
+        Log.println(Log.ASSERT , "detruction" ,"DESTRUCTION");
+        supprimerProximityAlert();
+
+    }
+
+    public void onResume(){
+
+        super.onResume();
+        Log.println(Log.ASSERT , "resume" ,"RESUME");
+        ajouterProximityAlert();
+        initialiseReceiver();
+    }
 
 
     @Override
@@ -265,8 +291,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
                 setConcerts();
 
-                Log.println(Log.ASSERT , "LISTES Concerts" , listeConcerts.get(0).getDate());
-                Log.println(Log.ASSERT , "LISTES MARKER" , listeMarker.toString());
+
 
             }
 
@@ -279,8 +304,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             Bundle extras = data.getExtras();
 
-            Log.println(Log.ASSERT , "listeView value " , Double.toString(extras.getDouble("go_long")));
-            Log.println(Log.ASSERT , "listeView value " , Double.toString(extras.getDouble("go_lat")));
+
 
 
             listeConcerts = (ArrayList<ConcertWindowData>) extras.getSerializable("liste_listeView");
@@ -288,6 +312,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             double lat = extras.getDouble("go_lat");
 
             setConcerts();
+
+
 
             if(lng != -1 && lat !=-1) goToMarker(lat , lng);
 
@@ -324,9 +350,56 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
 
+
+
         }
 
 
+    }
+
+    private void ajouterProximityAlert() {
+
+        if(listeConcerts.size()>0) {
+            for (int i = 0; i < listeConcerts.size(); i++) {
+
+                Intent intent = new Intent(PROX_ALERT_INTENT);
+                intent.putExtra(PROX_ALERT_INTENT, listeConcerts.get(i).getNom());
+                PendingIntent proximityIntent = PendingIntent.getBroadcast(this, i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                try {
+
+                    locationManager.addProximityAlert(
+                            listeConcerts.get(i).getLat(),
+                            listeConcerts.get(i).getLng(),
+                            1000.0f,
+                            -1,
+                            proximityIntent
+                    );
+
+
+                } catch (SecurityException e) {}
+            }
+
+        }
+
+    }
+
+    public void supprimerProximityAlert(){
+
+        if(listeConcerts.size()>0) {
+            for (int i = 0; i < listeConcerts.size() ; i++){
+                Intent intent = new Intent(PROX_ALERT_INTENT);
+                PendingIntent proximityIntent = PendingIntent.getBroadcast(this, i , intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                locationManager.removeProximityAlert(proximityIntent);
+
+            }
+
+        }
+    }
+
+    private void initialiseReceiver()
+    {
+        IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
+        registerReceiver(new ProximityBroadcastReceiver(), filter);
     }
 
     @Override
@@ -344,10 +417,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
 
-    /**
-     * Methode pour la gestion de la secousse
-     *
-     *
-     */
+
+
 
 }
