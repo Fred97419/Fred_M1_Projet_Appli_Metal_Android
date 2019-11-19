@@ -9,6 +9,14 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+/**
+ * Adapte la fenêtre d'info de googleMap
+ *
+ * Par default elle est représenté par un titre uniquement,
+ * ici on l'adapte pour afficher toutes les informations de notre concert.
+ *
+ * @see ConcertWindowData
+ */
 public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
 
 

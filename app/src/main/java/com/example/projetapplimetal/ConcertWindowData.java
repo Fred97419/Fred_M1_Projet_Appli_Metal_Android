@@ -6,22 +6,34 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
+/**
+ * Objet qui représente notre concert, elle implémente l'interface
+ * Serializable pour pouvoir être envoyé via des Intent.
+ *
+ * ** POINT IMPORTANT **
+ *
+ * Ici l'attribut image est normalement de type Bitmap or un objet
+ * Bitmap n'est pas sérialisable du coup on utlise un objet SerializableBitmap
+ * qui permet de contourner le problème
+ *
+ */
 public class ConcertWindowData implements Serializable {
 
     private String nom;
 
 
     /**
-     * Classe qui permet d'envoyer un BitMap car la classe BitMap ne l'ai pas
+     * Classe qui permet d'envoyer un BitMap car la classe BitMap n'est pas sérialisable
      *
-     * de même pour l'objet LatLng
+     * de même pour l'objet LatLng où l'on utilise deux valeurs "double" à la place.
+     *
+     * @see SerializableBitmap
      *
      */
     private SerializableBitmap image;
     private String date;
     private String duree;
     private String heure;
-    ;
 
     private double lat;
     private double lng;

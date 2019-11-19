@@ -9,6 +9,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * Classe qui va réagir en fonction de si l'on rentre dans la zone du ProximityIntent relative
+ * à chaque concert.
+ *
+ * Si l'on rentre ou ouvre une boite de dialogue disant qu'il y a un concert à proximité
+ */
 public class ProximityBroadcastReceiver extends BroadcastReceiver {
 
 

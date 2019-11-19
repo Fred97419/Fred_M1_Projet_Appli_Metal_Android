@@ -9,6 +9,9 @@ import android.util.Log;
 
 import java.lang.UnsupportedOperationException;
 
+/**
+ * Classe qui va écouter si l'on a secoué le telephone
+ */
 public class ShakeListener implements SensorEventListener
 {
     private static final int FORCE_THRESHOLD = 350;
@@ -28,12 +31,19 @@ public class ShakeListener implements SensorEventListener
     private Sensor accelerometre;
 
 
-
+    /**
+     * Interface avec la methode abstraite onShake()
+     */
     public interface OnShakeListener
     {
         public void onShake();
     }
 
+    /**
+     * Classe qui va écouter si on a eu une secousse
+     * en utilisant l'accéléromètre
+     * @param context
+     */
     public ShakeListener(Context context)
     {
         mContext = context;
@@ -46,16 +56,19 @@ public class ShakeListener implements SensorEventListener
         mShakeListener = listener;
     }
 
+    /**
+     * Demande au système de pouvoir utiliser l'accéléromètre
+     */
     public void resume() {
         mSensorMgr = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorMgr == null) {
-            throw new UnsupportedOperationException("Sensors not supported");
+            throw new UnsupportedOperationException("Capteur non supporté");
         }
         accelerometre = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         boolean supported = mSensorMgr.registerListener(this, accelerometre, SensorManager.SENSOR_DELAY_GAME);
         if (!supported) {
             mSensorMgr.unregisterListener(this, accelerometre);
-            throw new UnsupportedOperationException("Accelerometer not supported");
+            throw new UnsupportedOperationException("Accelerometre non supporté");
         }
     }
 
@@ -67,13 +80,17 @@ public class ShakeListener implements SensorEventListener
     }
 
 
-
+    /**
+     * Va écouter tous les changements de l'accéléromètre
+     *
+     * Si l'on a pas secouer depuis un certain temps on remet le compteur de secousse
+     * à 0
+     *
+     * Si on arrive à 3 secousse en dessous d'un certain délai on appelle la methode asbtraite onShake()
+     * @param event
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
-
-
-
-
         long now = System.currentTimeMillis();
 
         if ((now - mLastForce) > SHAKE_TIMEOUT) {
@@ -82,10 +99,6 @@ public class ShakeListener implements SensorEventListener
         }
 
         if ((now - mLastTime) > TIME_THRESHOLD) {
-
-
-
-
             long diff = now - mLastTime;
             float speed = Math.abs(event.values[0] + event.values[1] + event.values[2] - mLastX - mLastY - mLastZ) / diff * 10000;
             if (speed > FORCE_THRESHOLD) {

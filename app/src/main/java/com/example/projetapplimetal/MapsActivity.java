@@ -39,9 +39,20 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/**
+ *
+ * Classe MapActivity : Classe principale de l'application
+ * Elle affiche la carte via l'api de Google avec les différents marqueurs
+ * représentant chaque concert.
+ *
+ */
+
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback  {
+
+
+    /*-----------[Déclaration des variables]--------------*/
 
     private GoogleMap mMap;
     public final int LOCATION = 1;
@@ -57,10 +68,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     ShakeListener shaker;
 
-    ArrayList<ConcertWindowData>  listeConcerts;
-    ArrayList<ConcertWindowData> testListe;
+    ArrayList<ConcertWindowData>  listeConcerts; //ArrayList stockant les différents concerts de la classe ConcertWindowData
 
-    ArrayList<Marker> listeMarker;
+    ArrayList<Marker> listeMarker;               //ArrayList des différents marqueurs via GoogleMap
 
     LocationListener locationListener;
 
@@ -68,18 +78,24 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Charge le fragment GoogleMap ---------------------
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        //----------------------------------------------------
 
         listeConcerts = new ArrayList<ConcertWindowData>();
         listeMarker = new ArrayList<Marker>();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-
+        /**
+         * Synchronise la liste des concerts avec ce qui est
+         * sauvegardé dans l'objet SharedPreferences
+         *
+         * @see SharedPreferences
+         */
         if(getArrayList("liste_concert") != null){
 
             listeConcerts = getArrayList("liste_concert");
@@ -88,8 +104,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
         /**
+         * Classe qui detecte si il y a une secousse et lance
+         * l'activité pour rajouter un concert si detecté
          *
-         * Classe qui detecte si il y a une secousse
+         * @see ShakeListener
+         *
          */
         shaker = new ShakeListener(this);
         shaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
@@ -101,12 +120,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             }
         });
 
+
+
         /**
-         *
          * Sauvegarde de la liste des concerts dans le bundle pour éviter la perte de données
+         * en cas de changement de configuration
          *
          */
-
         if(savedInstanceState != null){
 
             listeConcerts = (ArrayList<ConcertWindowData>) savedInstanceState.get("liste_concert_save");
@@ -139,7 +159,20 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
 
-    public void saveArrayList(ArrayList<ConcertWindowData> list, String key){
+
+
+    /**
+     *  Sauvegarde la liste des concerts identifié par une
+     *  clé dans l'objet SharedPreferences de l'application.
+     *  Elle est sauvegardé en format JSON.
+     *
+     * @see SharedPreferences
+     * @see Gson
+     *
+     * @param list la liste de concerts à sauvegarder
+     * @param key  le chaine de caractère pour l'identifier
+     */
+    private void saveArrayList(ArrayList<ConcertWindowData> list, String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
@@ -148,13 +181,23 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         editor.apply();
     }
 
-    public ArrayList<ConcertWindowData> getArrayList(String key){
+    /**
+     * Récupère la liste identifié par la clé. Elle est récupérée
+     * en format JSON pour ensuite être transformé en liste de
+     * concerts.
+     *
+     *
+     * @param key Identifiant
+     * @return La liste des concerts enregistrés
+     */
+    private ArrayList<ConcertWindowData> getArrayList(String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
         Type type = new TypeToken<ArrayList<ConcertWindowData>>() {}.getType();
         return gson.fromJson(json, type);
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -165,6 +208,19 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     }
 
+    /**
+     * Va rajouter un objet ConcertWindowData représentant un concert
+     * dans la liste des concerts.
+     * @param lat latitude
+     * @param lng longitude
+     * @param titre titre du concert
+     * @param image image représentant le concert
+     * @param date  la date
+     * @param heure l'heure où commence le concert
+     * @param duree la durée du concert en heure
+     *
+     * @see ConcertWindowData
+     */
     public void addConcertToList(double lat , double lng , String titre , SerializableBitmap image , String date , String heure, String duree){
 
 
@@ -187,8 +243,14 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
 
-
-
+    /**
+     * Methode qui va parcourir la liste des concerts et pour
+     * chacun d'entre eux créé un marker googleMap et le rajoute
+     * à la carte.
+     * La fenêtre du marqueur est décrite avec la classe ConcertInfoWindowGoogleMap
+     *
+     * Puis sauvegarde la liste
+     */
     private void setConcerts(){
 
 
@@ -199,8 +261,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         ConcertInfoWindowGoogleMap concertInfoWindow = new ConcertInfoWindowGoogleMap(this);
         mMap.setInfoWindowAdapter(concertInfoWindow);
-
-
 
         for (int i = 0 ; i<listeConcerts.size() ; i++){
 
@@ -215,13 +275,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
 
         saveArrayList(listeConcerts , "liste_concert");
-
-
-
-
-
     }
 
+    /**
+     * Methode qui démarre l'activité représentant la ListView des concerts
+     * via un bouton.
+     * En lui envoyant la liste des concerts
+     * @param v
+     *
+     * @see ListeConcertActivity
+     */
     public void voirListeConcerts(View v){
 
         Bundle extras = new Bundle();
@@ -239,10 +302,23 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     }
 
+    /**
+     * Methode qui va appeler la fonction envoieLocalisationToActivity()
+     * via un bouton.
+     *
+     * @param v
+     */
     public void rajoutConcert(View v){
         envoieLocalisationToActivity();
     }
 
+    /**
+     * Démarre l'activité pour rajouter un nouveau concert.
+     * En lui envoyant la longitude et la latitude courante
+     * via un Intent.
+     *
+     * @see AddConcertActivity
+     */
     private void envoieLocalisationToActivity(){
 
         try {
@@ -258,7 +334,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     public void onPause() {
         super.onPause();
-        Log.println(Log.ASSERT , "detruction" ,"DESTRUCTION");
+
         supprimerProximityAlert();
 
     }
@@ -266,7 +342,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     public void onResume(){
 
         super.onResume();
-        Log.println(Log.ASSERT , "resume" ,"RESUME");
+
         ajouterProximityAlert();
         initialiseReceiver();
     }
@@ -275,9 +351,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-
-
-
+        /**
+         * Récupère toutes les informations renseigné par l'utilisateur sur un
+         * concert. Puis le rajoute à la liste des concerts.
+         */
         if(requestCode==AJOUT_CONCERT && resultCode==RESULT_OK){
 
             Bundle extras = data.getExtras();
@@ -288,57 +365,36 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 SerializableBitmap serializableImage = null;
 
 
-                /*
-
-                Si on a pas d'image récupérée on donne une image par default
-
-                 */
+                //Si l'image n'est pas récupéré on donne une image de base
                 if(extras.get("image") == null ){
-
                     image = BitmapFactory.decodeResource(getResources() , R.drawable.kal);
                     serializableImage = new SerializableBitmap(image);
-
-
                 }
 
                 else {
-
                     serializableImage = (SerializableBitmap) extras.get("image");
-
-
                 }
-
-
                 /**
-                 *
                  *  Utilisation de la classe SerializableBitmap, car ls images BitMap n'étant pas "Serializable"
                  *  ne peuvent donc pas être passées par des Intent
-                 *
                  */
-
-
-
                 addConcertToList(extras.getDouble("lati") , extras.getDouble("longi") , extras.getString("titre") ,
                         serializableImage , extras.getString("date") ,extras.getString("heure"), extras.getString("duree"));
 
 
                 setConcerts();
 
-
-
             }
-
-
-
         }
 
-
+        /**
+         * Met à jour la liste des concerts et
+         * se déplace vers le marqueur si l'utilisateur à cliqué sur un bouton
+         *
+         */
         if(requestCode==LISTE_CONCERT && resultCode==RESULT_OK){
 
             Bundle extras = data.getExtras();
-
-
-
 
             listeConcerts = (ArrayList<ConcertWindowData>) extras.getSerializable("liste_listeView");
             double lng = extras.getDouble("go_long");
@@ -346,17 +402,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             setConcerts();
 
-
-
             if(lng != -1 && lat !=-1) goToMarker(lat , lng);
 
         }
-
-
-
-
     }
 
+    /**
+     * Se déplace vers le Marqueur via sa longitude et latitude
+     *
+     * @param lat
+     * @param lng
+     */
     public void goToMarker(double lat , double lng){
 
         LatLng pos = new LatLng(lat , lng);
@@ -364,32 +420,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     }
 
-
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            String[] perm = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, perm, LOCATION);
-        } else {
-            mMap.setMyLocationEnabled(true);
-            mMap.setOnMyLocationButtonClickListener(this);
-            mMap.setOnMyLocationClickListener(this);
-            setConcerts();
-
-
-
-
-
-
-
-        }
-
-
-    }
-
+    /**
+     * Rajoute pour chaque concerts un alerte de proximité
+     *
+     */
     private void ajouterProximityAlert() {
 
         if(listeConcerts.size()>0) {
@@ -416,6 +450,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     }
 
+    /**
+     * Pour chaque concert supprime les alerte de proximité
+     */
     public void supprimerProximityAlert(){
 
         if(listeConcerts.size()>0) {
@@ -429,17 +466,40 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
     }
 
+    /**
+     * Initialise le recepteur, qui agit en fonction de si on rentre dans la zone
+     *
+     * @see ProximityBroadcastReceiver
+     */
     private void initialiseReceiver()
     {
         IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
         registerReceiver(new ProximityBroadcastReceiver(), filter);
     }
 
+
+
     @Override
-    public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String[] perm = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(this, perm, LOCATION);
+        } else {
+            mMap.setMyLocationEnabled(true);
+            mMap.setOnMyLocationButtonClickListener(this);
+            mMap.setOnMyLocationClickListener(this);
+            setConcerts();
+
+        }
 
     }
+
+
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {}
 
     @Override
     public boolean onMyLocationButtonClick() {

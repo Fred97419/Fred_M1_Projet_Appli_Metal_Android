@@ -11,6 +11,11 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+/**
+ * Activité qui va afficher la ListView avec nos concerts.
+ * Et mettre à jour la liste si changements.
+ *
+ */
 public class ListeConcertActivity extends AppCompatActivity {
 
     ListView liste_concertsView;
@@ -28,6 +33,7 @@ public class ListeConcertActivity extends AppCompatActivity {
 
             Bundle bundle = list_from_map.getExtras();
 
+            /** Récupère la liste des concerts passé via Intent puis l'affiche via la ListView **/
             ArrayList<ConcertWindowData> liste = (ArrayList<ConcertWindowData>) bundle.getSerializable("listeConcert");
 
             adapter = new ConcertAdapter(this , liste, getApplicationContext());
@@ -37,9 +43,6 @@ public class ListeConcertActivity extends AppCompatActivity {
 
         }
     }
-
-
-
     public void OK(View v){
 
 
@@ -49,6 +52,14 @@ public class ListeConcertActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Envoie la liste des concerts mis à jour,
+     * et va envoyer la longitude et latitude :
+     *
+     * (-1,-1) si l'on a pas appuyer sur le bouton "GO"
+     * sinon la longitude et latitude du concert ou l'on veut aller
+     * @see ConcertAdapter
+     */
     @Override
     public void finish(){
 

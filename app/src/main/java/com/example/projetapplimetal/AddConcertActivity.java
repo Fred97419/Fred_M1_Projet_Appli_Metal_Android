@@ -16,6 +16,14 @@ import android.widget.ImageView;
 
 import java.io.File;
 
+/**
+ * Activité qui sert à ajouter un concert en renseignant
+ *  -Le titre du concert
+ *  -La date
+ *  -La durée du concert
+ *  -L'heure où celui-ci commence
+ *  -Sa position
+ */
 public class AddConcertActivity extends AppCompatActivity {
 
     EditText nom;
@@ -56,7 +64,11 @@ public class AddConcertActivity extends AppCompatActivity {
         lat.setText(Double.toString(result.getDoubleExtra("lat" , 0)));
     }
 
-
+    /**
+     * Bouton valider, si l'on appuie dessus appelle la methode finish.
+     * En jouant également un son
+     * @param v
+     */
     public void valider(View v){
 
         validate = true;
@@ -69,6 +81,10 @@ public class AddConcertActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param v
+     */
     public void annuler(View v){
 
         validate = false;
@@ -76,6 +92,11 @@ public class AddConcertActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Lance un intent vers l'appareil photo pour demander une image via
+     * un bouton
+     * @param v
+     */
     public void prendrePhoto(View v){
 
         Intent prendrePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -87,6 +108,14 @@ public class AddConcertActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *  Récupère l'image BitMap via l'intent envoyé lorsque l'on appuie
+     *  sur le bouton "Prendre Photo"
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data la photo à récupéré
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -99,13 +128,15 @@ public class AddConcertActivity extends AppCompatActivity {
 
             }
 
-
-
-
-
-
     }
 
+    /**
+     * Termine l'application, en envoyant toutes les informations renseignées
+     * via un Intent à l'activité principale MapActivity si l'on a appuyé sur le
+     * bouton "Valider" sinon on finit l'application sans rien envoyer.
+     *
+     * @see MapsActivity
+     */
     @Override
     public void finish(){
 

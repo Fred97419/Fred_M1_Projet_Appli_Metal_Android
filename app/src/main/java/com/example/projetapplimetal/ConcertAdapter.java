@@ -20,7 +20,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 
-
+/**
+ * Classe qui va adapter la liste des concerts à la ListView.
+ * Elle prend la shema du fichier row_concert.xml pour représenter
+ * une cellule.
+ *
+ * Chaque cellule contient toutes les informations du concert avec
+ * en plus un bouton "Go" qui va nous emmener vers le concert sur l'api GoogleMap,
+ * et un bouton pour supprimer l'élement.
+ */
 public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     private ArrayList<ConcertWindowData> listeConcerts;
@@ -43,6 +51,7 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     }
 
+
     public ConcertAdapter(AppCompatActivity liste_activity,ArrayList<ConcertWindowData> data, Context context) {
 
         super(context, R.layout.row_concert, data);
@@ -59,6 +68,19 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
     private int lastPosition = -1;
 
+    /**
+     * Va adapter notre liste des concerts en vue pour la ListView, si on appuie sur "GO"
+     * on modifie l'attribut send_long et send_lat avec la position du concert, sinon
+     * ils ont une valeur par default égale à -1.
+     *
+     * Si on appuie sur le bouton "X" on supprime l'élément de la liste des concerts
+     * et on actualise la ListView
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -121,7 +143,7 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
                 listeConcerts.remove(concert);
                 notifyDataSetChanged();
-                
+
                 Bundle listeBundle = new Bundle();
                 listeBundle.putSerializable("liste_avec_supression" , listeConcerts);
                 Intent listeChanged = new Intent(context , MapsActivity.class);
