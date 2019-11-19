@@ -156,6 +156,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             };
         }
+
+        initialiseReceiver();
     }
 
 
@@ -335,7 +337,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     public void onPause() {
         super.onPause();
 
-        supprimerProximityAlert();
+
 
     }
 
@@ -343,8 +345,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         super.onResume();
 
-        ajouterProximityAlert();
-        initialiseReceiver();
     }
 
 
@@ -383,6 +383,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
                 setConcerts();
+                ajouterProximityAlert();
 
             }
         }
@@ -401,6 +402,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             double lat = extras.getDouble("go_lat");
 
             setConcerts();
+            ajouterProximityAlert();
+
 
             if(lng != -1 && lat !=-1) goToMarker(lat , lng);
 
@@ -429,9 +432,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         if(listeConcerts.size()>0) {
             for (int i = 0; i < listeConcerts.size(); i++) {
 
-                Intent intent = new Intent(PROX_ALERT_INTENT);
-                intent.putExtra(PROX_ALERT_INTENT, listeConcerts.get(i).getNom());
-                PendingIntent proximityIntent = PendingIntent.getBroadcast(this, i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                Intent nom_envoie_proximity = new Intent(PROX_ALERT_INTENT);
+                nom_envoie_proximity.putExtra("nom_proximity"+i, listeConcerts.get(i).getNom());
+                PendingIntent proximityIntent = PendingIntent.getBroadcast(getApplicationContext(), i, nom_envoie_proximity, 0);
                 try {
 
                     locationManager.addProximityAlert(
@@ -458,7 +461,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         if(listeConcerts.size()>0) {
             for (int i = 0; i < listeConcerts.size() ; i++){
                 Intent intent = new Intent(PROX_ALERT_INTENT);
-                PendingIntent proximityIntent = PendingIntent.getBroadcast(this, i , intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent proximityIntent = PendingIntent.getBroadcast(getApplicationContext(), i , intent, 0);
                 locationManager.removeProximityAlert(proximityIntent);
 
             }

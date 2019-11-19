@@ -15,9 +15,12 @@
 
         <Button
             android:id="@+id/rajout"
-            android:layout_width="128dp"
-            android:layout_height="match_parent"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="200dp"
+            android:layout_height="61dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="1"
+            android:background="#00BCD4"
             android:onClick="rajoutConcert"
             android:text="@string/main_ajouter_concert"
             app:layout_constraintEnd_toStartOf="@+id/button"
@@ -25,9 +28,14 @@
 
         <Button
             android:id="@+id/button"
-            android:layout_width="127dp"
-            android:layout_height="67dp"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="200dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="1"
+            android:background="#00BCD4"
             android:onClick="voirListeConcerts"
             android:text="@string/liste_concert_titre"
             app:layout_constraintStart_toEndOf="@+id/rajout"

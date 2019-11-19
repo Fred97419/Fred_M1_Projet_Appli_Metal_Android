@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,18 +22,20 @@ public class ProximityBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Resources res = context.getResources();
         String key = LocationManager.KEY_PROXIMITY_ENTERING;
 
 
         Boolean entering = intent.getBooleanExtra(key, false);
+        String nom = intent.getStringExtra("nom_proximity0");
         if (entering) {
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle("Concert à proximité");
+            alertDialogBuilder.setTitle(res.getString(R.string.broadcast_proxi));
 
-            alertDialogBuilder.setMessage("Le concert "+ " est proche de vous, voulez vous voir ?");
+            alertDialogBuilder.setMessage(res.getString(R.string.broadcast_leConcert)+" "+nom+" "+ res.getString(R.string.broadcast_proche));
 
-            alertDialogBuilder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setPositiveButton(res.getString(R.string.oui), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -41,7 +44,7 @@ public class ProximityBroadcastReceiver extends BroadcastReceiver {
                 }
             });
 
-            alertDialogBuilder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setNegativeButton(res.getString(R.string.non), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 

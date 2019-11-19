@@ -1,14 +1,13 @@
 <resources>
-    <string name="app_name">ProjetAppliMetal</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_name" translatable="false">Appli Concert</string>
 
     <!-- Attributs -->
     <string name="nom">Nom</string>
     <string name="date">Date</string>
     <string name="heure">Heure</string>
     <string name="duree">Durée</string>
-    <string name="lng">Longitude</string>
-    <string name="lat">Latitude</string>
+    <string name="lng" translatable="false">Longitude</string>
+    <string name="lat" translatable="false">Latitude</string>
 
 
     <!-- ADD_CONCERT -->
@@ -29,5 +28,19 @@
     <!-- MAIN -->
     <string name="main_ajouter_concert">Rajouter un concert</string>
 
+
+    <!-- CONCERT_INFO_WINDOW_GOOGLE_MAP -->
+    <string name="info_adapter_heure">heure(s)</string>
+
+    <!-- BRODCAST_RECEIVER -->
+    <string name="broadcast_proxi">Concert à proximité</string>
+    <string name="broadcast_leConcert">Le concert </string>
+    <string name="broadcast_proche">est proche de vous, voulez vous le voir ?</string>
+    <string name="oui">Oui</string>
+    <string name="non">Non</string>
+
+    <!--ROW_CONCERT-->
+    <string name="voir">Voir</string>
+    <string name="title_activity_maps" translatable="false">Appli Concert</string>
 
 </resources>

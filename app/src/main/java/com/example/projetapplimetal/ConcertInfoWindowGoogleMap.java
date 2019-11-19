@@ -2,6 +2,7 @@ package com.example.projetapplimetal;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +38,8 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoContents(Marker marker) {
 
+        Resources res = context.getResources();
+
         //récupération de la vue de concert_layout.xml
 
         View view = ((Activity)context).getLayoutInflater()
@@ -60,7 +63,7 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         nom.setText(concertWindowData.getNom());
         image.setImageBitmap(concertWindowData.getImage().getBitmap());
         date.setText(concertWindowData.getDate());
-        duree.setText(concertWindowData.getDuree()+" heure(s)");
+        duree.setText(concertWindowData.getDuree()+" "+res.getString(R.string.info_adapter_heure));
         heure.setText(concertWindowData.getHeure());
 
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_concert_photo">Add a picture</string>
+    <string name="add_concert_titre">Add a concert on my position</string>
+    <string name="annuler">Cancel</string>
+    <string name="broadcast_leConcert">The concert</string>
+    <string name="broadcast_proche">is close to you, do you want to see it?</string>
+    <string name="broadcast_proxi">Concert nearby</string>
+    <string name="date">Date</string>
+    <string name="date_hint">Enter a date</string>
+    <string name="duree">Duration</string>
+    <string name="duree_hint">Enter a duration</string>
+    <string name="heure">Time of day</string>
+    <string name="heure_hint">Enter a time</string>
+    <string name="info_adapter_heure">hour(s)</string>
+    <string name="liste_concert_titre">Concert list</string>
+    <string name="main_ajouter_concert">Add a concert</string>
+    <string name="name_hint">Enter a name</string>
+    <string name="nom">Name</string>
+    <string name="non">No</string>
+    <string name="oui">Yes</string>
+    <string name="valider">Confirm</string>
+    <string name="voir">See</string>
+</resources>
