@@ -119,10 +119,9 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
             @Override
             public void onClick(View v) {
 
-                listeConcerts.remove(lastPosition);
+                listeConcerts.remove(concert);
                 notifyDataSetChanged();
-
-
+                
                 Bundle listeBundle = new Bundle();
                 listeBundle.putSerializable("liste_avec_supression" , listeConcerts);
                 Intent listeChanged = new Intent(context , MapsActivity.class);

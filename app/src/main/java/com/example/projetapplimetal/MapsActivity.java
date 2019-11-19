@@ -11,6 +11,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -30,8 +32,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
@@ -53,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     ShakeListener shaker;
 
     ArrayList<ConcertWindowData>  listeConcerts;
+    ArrayList<ConcertWindowData> testListe;
 
     ArrayList<Marker> listeMarker;
 
@@ -72,6 +78,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         listeMarker = new ArrayList<Marker>();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+        if(getArrayList("liste_concert") != null){
+
+            listeConcerts = getArrayList("liste_concert");
+        }
+
 
 
         /**
@@ -123,6 +136,24 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             };
         }
+    }
+
+
+    public void saveArrayList(ArrayList<ConcertWindowData> list, String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public ArrayList<ConcertWindowData> getArrayList(String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<ConcertWindowData>>() {}.getType();
+        return gson.fromJson(json, type);
     }
 
     @Override
@@ -183,8 +214,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         }
 
-        ajouterProximityAlert();
-        initialiseReceiver();
+        saveArrayList(listeConcerts , "liste_concert");
+
+
+
 
 
     }
