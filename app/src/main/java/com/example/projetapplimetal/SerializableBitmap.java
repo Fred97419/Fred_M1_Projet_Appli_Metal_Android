@@ -2,7 +2,7 @@ package com.example.projetapplimetal;
 
 import android.graphics.Bitmap;
 import java.io.Serializable;
-/** * Created by John on 07-Sep-15. */
+
 public class SerializableBitmap implements Serializable {
     private final int[] pixels;
     private final int width, height;
