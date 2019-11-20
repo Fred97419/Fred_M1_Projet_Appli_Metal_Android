@@ -31,7 +31,8 @@ public class SerializableBitmap implements Serializable {
      * @return l'image Bitmap
      */
     public Bitmap getBitmap() {
-        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+        Bitmap b =  Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+        return b;
 
     }
 

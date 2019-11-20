@@ -2,8 +2,10 @@ package com.example.projetapplimetal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * Activité qui sert à ajouter un concert en renseignant
@@ -35,10 +41,12 @@ public class AddConcertActivity extends AppCompatActivity {
 
 
     Bitmap image_to_send;
+    Bitmap image_to_send_red;
 
     MediaPlayer player;
 
     static final int DEMANDER_IMAGE= 1;
+    static final int DEMANDER_GALLERIE=2;
 
 
 
@@ -108,6 +116,14 @@ public class AddConcertActivity extends AppCompatActivity {
 
     }
 
+    public void prendreGallerie(View v){
+
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK , android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, DEMANDER_GALLERIE);
+
+    }
+
     /**
      *  Récupère l'image BitMap via l'intent envoyé lorsque l'on appuie
      *  sur le bouton "Prendre Photo"
@@ -125,6 +141,28 @@ public class AddConcertActivity extends AppCompatActivity {
             if (requestCode == DEMANDER_IMAGE && resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
                 image_to_send = (Bitmap) extras.get("data");
+                image_to_send_red = scaleDownBitmap(image_to_send , 1000 , this);
+
+
+
+            }
+
+            if(requestCode == DEMANDER_GALLERIE && resultCode==RESULT_OK){
+
+                try {
+
+                    final Uri imageUri = data.getData();
+                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                    image_to_send = BitmapFactory.decodeStream(imageStream);
+                    image_to_send_red = scaleDownBitmap(image_to_send , 10 , this);
+
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Une erreur s'est produite",Toast.LENGTH_LONG).show();
+
+                }
+
 
             }
 
@@ -159,7 +197,7 @@ public class AddConcertActivity extends AppCompatActivity {
             intent.putExtra("longi" , Double.valueOf(lng.getText().toString()));
             intent.putExtra("lati" , Double.valueOf(lat.getText().toString()));
 
-            if (image_to_send!=null) intent.putExtra("image" , new SerializableBitmap(image_to_send));
+            if (image_to_send_red!=null) intent.putExtra("image" , new SerializableBitmap(image_to_send_red));
 
             setResult(RESULT_OK , intent);
             super.finish();
@@ -170,6 +208,18 @@ public class AddConcertActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+
+        int h= (int) (newHeight*densityMultiplier);
+        int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+        photo=Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
     }
 
     @Override

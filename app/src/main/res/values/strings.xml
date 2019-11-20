@@ -13,6 +13,7 @@
     <!-- ADD_CONCERT -->
     <string name="add_concert_titre">Rajouter un concert sur ma position</string>
     <string name="add_concert_photo">Ajouter une photo</string>
+    <string name="add_concert_gallerie" translatable="false">Ajouter via la gallerie</string>
     <string name="valider">Valider</string>
     <string name="annuler">Annuler</string>
 
