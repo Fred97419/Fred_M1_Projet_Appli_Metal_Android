@@ -1,6 +1,7 @@
 package com.example.projetapplimetal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MotionEventCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -43,17 +44,10 @@ public class AddConcertActivity extends AppCompatActivity {
     EditText lat;
     Bitmap image_to_send;
 
-
-    GestureDetector detecteur;
-
     MediaPlayer player;
 
     static final int DEMANDER_IMAGE= 1;
     static final int DEMANDER_GALLERIE=2;
-
-
-    private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
 
     boolean validate = false;
@@ -74,33 +68,6 @@ public class AddConcertActivity extends AppCompatActivity {
 
         lng.setText(Double.toString(result.getDoubleExtra("long" , 0)));
         lat.setText(Double.toString(result.getDoubleExtra("lat" , 0)));
-
-        detecteur = new GestureDetector(this , new GestureDetector.SimpleOnGestureListener(){
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-
-                finish();
-
-                return true; // the magic is here
-            }
-
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-
-                return super.onDoubleTap(e);
-            }
-
-            @Override
-            public boolean onDoubleTapEvent(MotionEvent e) {
-
-                return super.onDoubleTapEvent(e);
-            }
-        });
-
-
-
-
         /**
          * Si il y a changement de configuration
          */
@@ -119,8 +86,21 @@ public class AddConcertActivity extends AppCompatActivity {
             }
 
         }
+    }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
 
+        int action = MotionEventCompat.getActionMasked(event);
+
+        if (action == MotionEvent.ACTION_DOWN){
+            finish();
+            return true;
+        }
+
+        else {
+            return super.onTouchEvent(event);
+        }
 
     }
 
