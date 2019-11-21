@@ -88,6 +88,11 @@ public class AddConcertActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Detecte si on swipe vers le bas 
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
