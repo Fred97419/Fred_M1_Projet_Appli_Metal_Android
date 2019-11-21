@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,10 +41,10 @@ public class AddConcertActivity extends AppCompatActivity {
     EditText heure;
     EditText lng;
     EditText lat;
-
-
     Bitmap image_to_send;
-    Bitmap image_to_send_red;
+
+
+    GestureDetector detecteur;
 
     MediaPlayer player;
 
@@ -49,7 +52,8 @@ public class AddConcertActivity extends AppCompatActivity {
     static final int DEMANDER_GALLERIE=2;
 
 
-
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
 
     boolean validate = false;
@@ -70,7 +74,81 @@ public class AddConcertActivity extends AppCompatActivity {
 
         lng.setText(Double.toString(result.getDoubleExtra("long" , 0)));
         lat.setText(Double.toString(result.getDoubleExtra("lat" , 0)));
+
+        detecteur = new GestureDetector(this , new GestureDetector.SimpleOnGestureListener(){
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+
+                finish();
+
+                return true; // the magic is here
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+
+                return super.onDoubleTap(e);
+            }
+
+            @Override
+            public boolean onDoubleTapEvent(MotionEvent e) {
+
+                return super.onDoubleTapEvent(e);
+            }
+        });
+
+
+
+
+        /**
+         * Si il y a changement de configuration
+         */
+        if (savedInstanceState!=null){
+            nom.setText(savedInstanceState.getString("nom_to_send"));
+            date.setText(savedInstanceState.getString("date_to_send"));
+            heure.setText(savedInstanceState.getString("heure_to_send"));
+            duree.setText(savedInstanceState.getString("duree_to_send"));
+            lng.setText(Double.toString(savedInstanceState.getDouble("lng_to_send")));
+            lat.setText(Double.toString(savedInstanceState.getDouble("lat_to_send")));
+
+            SerializableBitmap img_serializable = (SerializableBitmap) savedInstanceState.getSerializable("image_to_send");
+            if(img_serializable!=null){
+
+                image_to_send = img_serializable.getBitmap();
+            }
+
+        }
+
+
+
     }
+
+    /**
+     * Va sauvegarder nos différents champs renseignés si il y a eu
+     * un changement de configuration
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("nom_to_send" , nom.getText().toString());
+        savedInstanceState.putString("date_to_send" , date.getText().toString());
+        savedInstanceState.putString("heure_to_send" ,heure.getText().toString());
+        savedInstanceState.putString("duree_to_send",duree.getText().toString());
+        savedInstanceState.putDouble("lng_to_send",Double.valueOf(lng.getText().toString()));
+        savedInstanceState.putDouble("lat_to_send",Double.valueOf(lat.getText().toString()));
+
+        if(image_to_send!=null) {
+            savedInstanceState.putSerializable("image_to_send" , new SerializableBitmap(image_to_send));
+        }
+
+
+    }
+
+
 
     /**
      * Bouton valider, si l'on appuie dessus appelle la methode finish.
@@ -140,8 +218,8 @@ public class AddConcertActivity extends AppCompatActivity {
 
             if (requestCode == DEMANDER_IMAGE && resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
-                image_to_send = (Bitmap) extras.get("data");
-                image_to_send_red = scaleDownBitmap(image_to_send , 1000 , this);
+                Bitmap image = (Bitmap) extras.get("data");
+                image_to_send= scaleDownBitmap(image, 1000 , this);
 
 
 
@@ -153,8 +231,8 @@ public class AddConcertActivity extends AppCompatActivity {
 
                     final Uri imageUri = data.getData();
                     final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                    image_to_send = BitmapFactory.decodeStream(imageStream);
-                    image_to_send_red = scaleDownBitmap(image_to_send , 10 , this);
+                    Bitmap image = BitmapFactory.decodeStream(imageStream);
+                    image_to_send= scaleDownBitmap(image, 100 , this);
 
 
                 } catch (FileNotFoundException e) {
@@ -197,7 +275,7 @@ public class AddConcertActivity extends AppCompatActivity {
             intent.putExtra("longi" , Double.valueOf(lng.getText().toString()));
             intent.putExtra("lati" , Double.valueOf(lat.getText().toString()));
 
-            if (image_to_send_red!=null) intent.putExtra("image" , new SerializableBitmap(image_to_send_red));
+            if (image_to_send!=null) intent.putExtra("image" , new SerializableBitmap(image_to_send));
 
             setResult(RESULT_OK , intent);
             super.finish();
@@ -210,6 +288,14 @@ public class AddConcertActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Reduit la résolution d'une image Bitmap
+     *
+     * @param photo l'image bitmap à reduire
+     * @param newHeight nouvelle taille
+     * @param context
+     * @return L'image Bitmap reduite
+     */
     public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
 
         final float densityMultiplier = context.getResources().getDisplayMetrics().density;
@@ -230,8 +316,6 @@ public class AddConcertActivity extends AppCompatActivity {
             player = null;
         }
     }
-
-
 
 
 }
