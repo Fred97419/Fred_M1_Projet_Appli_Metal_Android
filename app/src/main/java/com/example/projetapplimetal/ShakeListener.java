@@ -10,24 +10,24 @@ import android.util.Log;
 import java.lang.UnsupportedOperationException;
 
 /**
- * Classe qui va écouter si l'on a secoué le telephone
+ * Classe qui va écouter si l'on a secoué le telephone en utilisant l'accéléromètre
  */
 public class ShakeListener implements SensorEventListener
 {
-    private static final int FORCE_THRESHOLD = 350;
-    private static final int TIME_THRESHOLD = 100;
-    private static final int SHAKE_TIMEOUT = 500;
-    private static final int SHAKE_DURATION = 1000;
-    private static final int SHAKE_COUNT = 3;
+    private static final int FORCE_THRESHOLD = 350; //seuil de force
+    private static final int TIME_THRESHOLD = 100; //seuil de temps
+    private static final int SHAKE_TIMEOUT = 500; //delai après lequel le nombre de secousse se reinitialise
+    private static final int SHAKE_DURATION = 1000; //durée de la secousse
+    private static final int SHAKE_COUNT = 3; //nombre de secousse pour activer onShake
 
     private SensorManager mSensorMgr;
     private float mLastX=-1.0f, mLastY=-1.0f, mLastZ=-1.0f;
-    private long mLastTime;
+    private long mLastTime; //dernier temps enregistré
     private OnShakeListener mShakeListener;
     private Context mContext;
-    private int mShakeCount = 0;
-    private long mLastShake;
-    private long mLastForce;
+    private int mShakeCount = 0; //compteur de secousse
+    private long mLastShake; //dernière secousse enregistré
+    private long mLastForce; //dernière force enregistré (accéléromètre)
     private Sensor accelerometre;
 
 
@@ -39,18 +39,14 @@ public class ShakeListener implements SensorEventListener
         public void onShake();
     }
 
-    /**
-     * Classe qui va écouter si on a eu une secousse
-     * en utilisant l'accéléromètre
-     * @param context
-     */
+
     public ShakeListener(Context context)
     {
         mContext = context;
-        Log.println(Log.ASSERT , "SHAKE IT " , "SHAKE IT" );
         resume();
     }
 
+    //
     public void setOnShakeListener(OnShakeListener listener)
     {
         mShakeListener = listener;
@@ -93,19 +89,25 @@ public class ShakeListener implements SensorEventListener
     public void onSensorChanged(SensorEvent event) {
         long now = System.currentTimeMillis();
 
+        //si l'on a pas secouer depuis 500ms le compteur revient à 0
         if ((now - mLastForce) > SHAKE_TIMEOUT) {
 
             mShakeCount = 0;
         }
 
+
         if ((now - mLastTime) > TIME_THRESHOLD) {
             long diff = now - mLastTime;
             float speed = Math.abs(event.values[0] + event.values[1] + event.values[2] - mLastX - mLastY - mLastZ) / diff * 10000;
+
+            // si la vitesse atteint au moins 300
             if (speed > FORCE_THRESHOLD) {
+                //si le nombre de secousse est arrivé à 3 et que le dernier shake a été fait il y a moins d'une seconde
                 if ((++mShakeCount >= SHAKE_COUNT) && (now - mLastShake > SHAKE_DURATION)) {
                     mLastShake = now;
                     mShakeCount = 0;
                     if (mShakeListener != null) {
+                        //on appelle la methode onShake() de l'interface
                         mShakeListener.onShake();
                     }
                 }

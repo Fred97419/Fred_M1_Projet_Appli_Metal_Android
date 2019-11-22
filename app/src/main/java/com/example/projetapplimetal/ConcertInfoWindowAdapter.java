@@ -18,12 +18,12 @@ import com.google.android.gms.maps.model.Marker;
  *
  * @see ConcertWindowData
  */
-public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
+public class ConcertInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
 
     private Context context;
 
-    public ConcertInfoWindowGoogleMap(Context context){
+    public ConcertInfoWindowAdapter(Context context){
 
         this.context = context;
     }
@@ -51,13 +51,7 @@ public class ConcertInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         TextView duree = view.findViewById(R.id.duree);
         TextView heure = view.findViewById(R.id.heure);
 
-
-
-
-
         //Description de la fenêtre
-
-
         ConcertWindowData concertWindowData = (ConcertWindowData) marker.getTag();
 
         nom.setText(concertWindowData.getNom());

@@ -93,7 +93,6 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
 
 
         if (convertView == null) {
-
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.row_concert, parent, false);
@@ -129,10 +128,6 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
                 send_long=concert.getLng();
                 send_lat=concert.getLat();
                 liste_activity.finish();
-
-
-
-
             }
         });
 

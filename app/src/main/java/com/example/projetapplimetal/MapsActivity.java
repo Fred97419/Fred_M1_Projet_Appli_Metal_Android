@@ -74,8 +74,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     LocationListener locationListener;
 
+    ProximityBroadcastReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Charge le fragment GoogleMap ---------------------
@@ -90,15 +93,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        receiver = new ProximityBroadcastReceiver();
+
         /**
          * Synchronise la liste des concerts avec ce qui est
          * sauvegardé dans l'objet SharedPreferences
          *
          * @see SharedPreferences
          */
-        if(getArrayList("liste_concert") != null){
+        if(getListeFromJson("liste_concert") != null){
 
-            listeConcerts = getArrayList("liste_concert");
+            listeConcerts = getListeFromJson("liste_concert");
         }
 
 
@@ -115,10 +120,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             @Override
             public void onShake() {
 
-                envoieLocalisationToActivity();
+                envoieLocalisationToActivityAddConcert();
 
             }
         });
+
+
 
 
 
@@ -157,7 +164,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             };
         }
 
+
         initialiseReceiver();
+
     }
 
 
@@ -174,12 +183,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * @param list la liste de concerts à sauvegarder
      * @param key  le chaine de caractère pour l'identifier
      */
-    private void saveArrayList(ArrayList<ConcertWindowData> list, String key){
+    private void saveListeToJson(ArrayList<ConcertWindowData> list, String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
         String json = gson.toJson(list);
         editor.putString(key, json);
+
         editor.apply();
     }
 
@@ -192,7 +202,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * @param key Identifiant
      * @return La liste des concerts enregistrés
      */
-    private ArrayList<ConcertWindowData> getArrayList(String key){
+    private ArrayList<ConcertWindowData> getListeFromJson(String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
@@ -261,7 +271,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         supprimerProximityAlert();
 
 
-        ConcertInfoWindowGoogleMap concertInfoWindow = new ConcertInfoWindowGoogleMap(this);
+        ConcertInfoWindowAdapter concertInfoWindow = new ConcertInfoWindowAdapter(this);
         mMap.setInfoWindowAdapter(concertInfoWindow);
 
         for (int i = 0 ; i<listeConcerts.size() ; i++){
@@ -275,8 +285,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
         }
+        ajouterProximityAlert();
 
-        saveArrayList(listeConcerts , "liste_concert");
+        saveListeToJson(listeConcerts , "liste_concert");
     }
 
     /**
@@ -311,7 +322,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * @param v
      */
     public void rajoutConcert(View v){
-        envoieLocalisationToActivity();
+        envoieLocalisationToActivityAddConcert();
     }
 
     /**
@@ -321,7 +332,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      *
      * @see AddConcertActivity
      */
-    private void envoieLocalisationToActivity(){
+    private void envoieLocalisationToActivityAddConcert(){
 
         try {
             location = locationManager.getLastKnownLocation(locationProvider);
@@ -336,7 +347,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     public void onPause() {
         super.onPause();
-
+        unregisterReceiver(receiver);
 
 
     }
@@ -344,6 +355,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     public void onResume(){
 
         super.onResume();
+        initialiseReceiver();
 
     }
 
@@ -361,14 +373,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             if(extras !=null){
 
-                Bitmap image;
+                Bitmap image , image_compress;
                 SerializableBitmap serializableImage = null;
 
 
                 //Si l'image n'est pas récupéré on donne une image de base
                 if(extras.get("image") == null ){
                     image = BitmapFactory.decodeResource(getResources() , R.drawable.kal);
-                    serializableImage = new SerializableBitmap(image);
+                    image_compress = scaleDownBitmap(image , 100 , this);
+
+                    serializableImage = new SerializableBitmap(image_compress);
                 }
 
                 else {
@@ -383,7 +397,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
                 setConcerts();
-                ajouterProximityAlert();
+
 
             }
         }
@@ -402,7 +416,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             double lat = extras.getDouble("go_lat");
 
             setConcerts();
-            ajouterProximityAlert();
+
 
 
             if(lng != -1 && lat !=-1) goToMarker(lat , lng);
@@ -432,25 +446,41 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         if(listeConcerts.size()>0) {
             for (int i = 0; i < listeConcerts.size(); i++) {
 
-                Intent nom_envoie_proximity = new Intent(PROX_ALERT_INTENT);
-                nom_envoie_proximity.putExtra("nom_proximity"+i, listeConcerts.get(i).getNom());
-                PendingIntent proximityIntent = PendingIntent.getBroadcast(getApplicationContext(), i, nom_envoie_proximity, 0);
+                Intent intent = new Intent(PROX_ALERT_INTENT);
+
+                PendingIntent proximityIntent = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 try {
 
                     locationManager.addProximityAlert(
                             listeConcerts.get(i).getLat(),
                             listeConcerts.get(i).getLng(),
-                            1000.0f,
+                            10000.0f,
                             -1,
                             proximityIntent
                     );
 
 
-                } catch (SecurityException e) {}
+                } catch (SecurityException e) {
+                    Log.println(Log.ASSERT , "ERREUR_PROXIMITY" , e.getMessage());
+                }
             }
+
+            initialiseReceiver();
 
         }
 
+    }
+
+    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+
+        int h= (int) (newHeight*densityMultiplier);
+        int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+        photo=Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
     }
 
     /**
@@ -461,8 +491,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         if(listeConcerts.size()>0) {
             for (int i = 0; i < listeConcerts.size() ; i++){
                 Intent intent = new Intent(PROX_ALERT_INTENT);
-                PendingIntent proximityIntent = PendingIntent.getBroadcast(getApplicationContext(), i , intent, 0);
+                PendingIntent proximityIntent = PendingIntent.getBroadcast(getApplicationContext(), i , intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 locationManager.removeProximityAlert(proximityIntent);
+
 
             }
 
@@ -477,7 +508,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private void initialiseReceiver()
     {
         IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
-        registerReceiver(new ProximityBroadcastReceiver(), filter);
+        registerReceiver(receiver, filter);
     }
 
 

@@ -35,8 +35,8 @@
 
     <!-- BRODCAST_RECEIVER -->
     <string name="broadcast_proxi">Concert à proximité</string>
-    <string name="broadcast_leConcert">Le concert </string>
-    <string name="broadcast_proche">est proche de vous, voulez vous le voir ?</string>
+    <string name="broadcast_leConcert">Un concert</string>
+    <string name="broadcast_proche">est proche de vous.</string>
     <string name="oui">Oui</string>
     <string name="non">Non</string>
 

@@ -27,15 +27,18 @@ public class ProximityBroadcastReceiver extends BroadcastReceiver {
 
 
         Boolean entering = intent.getBooleanExtra(key, false);
-        String nom = intent.getStringExtra("nom_proximity0");
+
+        String test = intent.getDataString();
+
+
         if (entering) {
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder.setTitle(res.getString(R.string.broadcast_proxi));
 
-            alertDialogBuilder.setMessage(res.getString(R.string.broadcast_leConcert)+" "+nom+" "+ res.getString(R.string.broadcast_proche));
+            alertDialogBuilder.setMessage(res.getString(R.string.broadcast_leConcert)+" "+ res.getString(R.string.broadcast_proche));
 
-            alertDialogBuilder.setPositiveButton(res.getString(R.string.oui), new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -44,14 +47,9 @@ public class ProximityBroadcastReceiver extends BroadcastReceiver {
                 }
             });
 
-            alertDialogBuilder.setNegativeButton(res.getString(R.string.non), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
 
 
 
-                }
-            });
 
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();

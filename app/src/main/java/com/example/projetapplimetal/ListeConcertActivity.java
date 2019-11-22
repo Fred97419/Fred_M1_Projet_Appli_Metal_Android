@@ -56,7 +56,8 @@ public class ListeConcertActivity extends AppCompatActivity {
      * Envoie la liste des concerts mis à jour,
      * et va envoyer la longitude et latitude :
      *
-     * (-1,-1) si l'on a pas appuyer sur le bouton "GO"
+     * (-1,-1) si l'on a pas appuyer sur le bouton "OK"
+     *
      * sinon la longitude et latitude du concert ou l'on veut aller
      * @see ConcertAdapter
      */
@@ -77,9 +78,6 @@ public class ListeConcertActivity extends AppCompatActivity {
         setResult(RESULT_OK , forMapActivity);
 
         super.finish();
-
-
-
 
 
     }

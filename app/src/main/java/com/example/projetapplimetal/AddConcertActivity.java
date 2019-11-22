@@ -204,7 +204,7 @@ public class AddConcertActivity extends AppCompatActivity {
             if (requestCode == DEMANDER_IMAGE && resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
                 Bitmap image = (Bitmap) extras.get("data");
-                image_to_send= scaleDownBitmap(image, 1000 , this);
+                image_to_send= scaleDownBitmap(image, 100 , this);
 
 
 
@@ -220,11 +220,7 @@ public class AddConcertActivity extends AppCompatActivity {
                     image_to_send= scaleDownBitmap(image, 100 , this);
 
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Une erreur s'est produite",Toast.LENGTH_LONG).show();
-
-                }
+                } catch (FileNotFoundException e) {}
 
 
             }

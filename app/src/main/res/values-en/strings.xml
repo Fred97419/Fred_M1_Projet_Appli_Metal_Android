@@ -3,8 +3,8 @@
     <string name="add_concert_photo">Add a picture</string>
     <string name="add_concert_titre">Add a concert on my position</string>
     <string name="annuler">Cancel</string>
-    <string name="broadcast_leConcert">The concert</string>
-    <string name="broadcast_proche">is close to you, do you want to see it?</string>
+    <string name="broadcast_leConcert">A concert</string>
+    <string name="broadcast_proche">is close to you.</string>
     <string name="broadcast_proxi">Concert nearby</string>
     <string name="date">Date</string>
     <string name="date_hint">Enter a date</string>
