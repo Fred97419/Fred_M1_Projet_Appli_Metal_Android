@@ -206,6 +206,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
+
         Type type = new TypeToken<ArrayList<ConcertWindowData>>() {}.getType();
         return gson.fromJson(json, type);
     }
@@ -302,8 +303,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         Bundle extras = new Bundle();
 
-        extras.putSerializable("listeConcert" , listeConcerts);
-
+        for (int i = 0 ; i<listeConcerts.size() ; i++){
+            extras.putSerializable("concert"+i , listeConcerts.get(i));
+        }
+        extras.putInt("longueur" , listeConcerts.size());
         Intent forListeConcertsActivity = new Intent(this ,ListeConcertActivity.class);
 
         forListeConcertsActivity.putExtras(extras);
@@ -411,7 +414,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             Bundle extras = data.getExtras();
 
-            listeConcerts = (ArrayList<ConcertWindowData>) extras.getSerializable("liste_listeView");
+            listeConcerts.clear();
+
+            int longueur = extras.getInt("listeViewLong");
+
+            for (int i =0 ; i<longueur ; i++){
+
+                listeConcerts.add((ConcertWindowData) extras.getSerializable("listeView"+i));
+
+            }
+
             double lng = extras.getDouble("go_long");
             double lat = extras.getDouble("go_lat");
 

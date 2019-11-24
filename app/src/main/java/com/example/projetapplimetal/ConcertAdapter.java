@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -84,6 +85,7 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        Resources res = context.getResources();
 
         final ConcertWindowData concert = getItem(position);
 
@@ -119,7 +121,7 @@ public class ConcertAdapter extends ArrayAdapter<ConcertWindowData> {
         viewHolder.titre.setText(concert.getNom());
         viewHolder.date.setText(concert.getDate());
         viewHolder.heure.setText(concert.getHeure());
-        viewHolder.duree.setText(concert.getDuree());
+        viewHolder.duree.setText(concert.getDuree()+" "+res.getString(R.string.info_adapter_heure));
 
         viewHolder.voirConcert.setOnClickListener(new View.OnClickListener() {
             @Override

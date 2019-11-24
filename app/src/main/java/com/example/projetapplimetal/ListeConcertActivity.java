@@ -34,7 +34,13 @@ public class ListeConcertActivity extends AppCompatActivity {
             Bundle bundle = list_from_map.getExtras();
 
             /** Récupère la liste des concerts passé via Intent puis l'affiche via la ListView **/
-            ArrayList<ConcertWindowData> liste = (ArrayList<ConcertWindowData>) bundle.getSerializable("listeConcert");
+            ArrayList<ConcertWindowData> liste = new ArrayList<ConcertWindowData>();
+            int taille = bundle.getInt("longueur");
+
+            for (int i=0 ; i< taille ; i++){
+
+                liste.add( (ConcertWindowData) bundle.getSerializable("concert"+i));
+            }
 
             adapter = new ConcertAdapter(this , liste, getApplicationContext());
 
@@ -66,7 +72,12 @@ public class ListeConcertActivity extends AppCompatActivity {
 
         Bundle extras = new Bundle();
 
-        extras.putSerializable("liste_listeView" , adapter.getListeConcerts());
+        extras.putInt("listeViewLong" , adapter.getListeConcerts().size());
+
+        for (int i = 0 ; i< adapter.getListeConcerts().size() ; i++){
+
+            extras.putSerializable("listeView"+i , adapter.getListeConcerts().get(i));
+        }
         extras.putDouble("go_long" , adapter.getSend_long());
         extras.putDouble("go_lat" , adapter.getSend_lat());
 
